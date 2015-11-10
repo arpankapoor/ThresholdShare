@@ -4,6 +4,7 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.ListFragment;
+import android.util.SparseBooleanArray;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
@@ -17,9 +18,9 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.List;
 
-import io.github.arpankapoor.thresholdshare.dummy.DummyContent;
 import io.github.arpankapoor.user.User;
 
 public class SelectReceiversFragment extends ListFragment {
@@ -36,11 +37,22 @@ public class SelectReceiversFragment extends ListFragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         new GetUsersTask().execute();
+    }
 
-        setListAdapter(new ArrayAdapter<>(getActivity(),
-                android.R.layout.simple_list_item_multiple_choice, DummyContent.ITEMS));
+    public List<User> getSelectedReceivers() {
+        List<User> selectedUsers = new ArrayList<>();
+        ListView listView = getListView();
+        int count = listView.getCount();
+        SparseBooleanArray sparseBooleanArray = listView.getCheckedItemPositions();
+
+        for (int i = 0; i < count; i++) {
+            if (sparseBooleanArray.get(i)) {
+                selectedUsers.add((User) listView.getItemAtPosition(i));
+            }
+        }
+
+        return selectedUsers;
     }
 
     private class GetUsersTask extends AsyncTask<Void, Void, List<User>> {
@@ -71,6 +83,8 @@ public class SelectReceiversFragment extends ListFragment {
                 }
 
                 String json = buffer.toString();
+
+                // Convert to list of User objects
                 Gson gson = new Gson();
                 return gson.fromJson(json, new TypeToken<List<User>>() {
                 }.getType());
