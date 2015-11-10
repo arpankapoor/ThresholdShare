@@ -3,9 +3,9 @@
     <string name="action_settings">Settings</string>
     <string name="title_activity_send_message">Select Receivers</string>
     <string name="next">Next</string>
-    <string name="threshold_value">Threshold Value</string>
-    <string name="validity_text">
-        Select number of hours after upload for which decryption should be possible
+    <string name="threshold_value_text">Threshold Value</string>
+    <string name="threshold_hours_text">
+        Select number of hours within which subkeys should be available.
     </string>
 
     <string name="send_message">Send</string>

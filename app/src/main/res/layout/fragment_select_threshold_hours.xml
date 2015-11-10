@@ -8,29 +8,27 @@
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
-    tools:context="io.github.arpankapoor.thresholdshare.SelectThresholdFragment">
+    tools:context="io.github.arpankapoor.thresholdshare.SelectThresholdHoursFragment">
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceMedium"
-        android:text="@string/threshold_value_text"
-        android:id="@+id/threshold_text_view"
+        android:text="@string/threshold_hours_text"
+        android:id="@+id/threshold_hours_text_view"
         android:layout_alignParentTop="true"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
         android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true"
-        android:layout_centerHorizontal="true"
-        android:gravity="center" />
+        android:layout_alignParentEnd="true" />
 
     <NumberPicker
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/thresholdPicker"
-        android:layout_below="@id/threshold_text_view"
+        android:id="@+id/thresholdHoursPicker"
+        android:layout_below="@+id/threshold_hours_text_view"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true" />
+        android:layout_alignRight="@+id/threshold_hours_text_view"
+        android:layout_alignEnd="@+id/threshold_hours_text_view" />
 </RelativeLayout>

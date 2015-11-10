@@ -1,13 +1,13 @@
 package io.github.arpankapoor.thresholdshare;
 
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 
@@ -30,6 +30,7 @@ public class SendMessageActivity extends AppCompatActivity {
     private Fragment activeFragment = null;
     private SelectReceiversFragment selectReceiversFragment = null;
     private SelectThresholdFragment selectThresholdFragment = null;
+    private SelectThresholdHoursFragment selectThresholdHoursFragment = null;
 
     private void selectImage() {
         Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
@@ -40,10 +41,12 @@ public class SendMessageActivity extends AppCompatActivity {
     }
 
     private void setFragment(Fragment fragment) {
-        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        fragmentManager.popBackStack();
+
+        FragmentTransaction transaction = fragmentManager.beginTransaction();
         transaction.replace(R.id.fragment_container, fragment);
         transaction.commit();
-
         activeFragment = fragment;
     }
 
@@ -69,9 +72,21 @@ public class SendMessageActivity extends AppCompatActivity {
             // Select Threshold Value
             selectThresholdFragment = new SelectThresholdFragment();
             setFragment(selectThresholdFragment);
+
+            // Set the max threshold size
+            selectThresholdFragment.setMaxThresholdValue(receivers.size());
+
+        } else if (activeFragment == selectThresholdFragment) {
+
+            selectThresholdHoursFragment = new SelectThresholdHoursFragment();
+            setFragment(selectThresholdHoursFragment);
+
+            // Change button text
             Button nextButton = (Button) findViewById(R.id.next_button);
             nextButton.setText(getString(R.string.send_message));
-        } else if (activeFragment == selectThresholdFragment) {
+
+        } else {
+            new SendMessageTask().execute();
             cancelButtonHandler(view);
         }
     }
@@ -90,6 +105,12 @@ public class SendMessageActivity extends AppCompatActivity {
             } catch (FileNotFoundException ex) {
                 ex.printStackTrace();
             }
+        }
+    }
+
+    private class SendMessageTask extends AsyncTask<Void, Void, Void> {
+        protected Void doInBackground(Void... params) {
+            return null;
         }
     }
 }
