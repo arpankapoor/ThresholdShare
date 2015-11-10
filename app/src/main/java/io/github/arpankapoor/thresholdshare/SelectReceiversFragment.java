@@ -61,9 +61,13 @@ public class SelectReceiversFragment extends ListFragment {
                     .buildUpon()
                     .appendPath(getString(R.string.get_user_list_api))
                     .build();
+
+            HttpURLConnection connection = null;
+            BufferedReader reader = null;
+
             try {
                 URL url = new URL(uri.toString());
-                HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+                connection = (HttpURLConnection) url.openConnection();
                 connection.connect();
 
                 InputStream inputStream = connection.getInputStream();
@@ -71,7 +75,7 @@ public class SelectReceiversFragment extends ListFragment {
                 if (inputStream == null) {
                     return null;
                 }
-                BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
+                reader = new BufferedReader(new InputStreamReader(inputStream));
 
                 String line;
                 while ((line = reader.readLine()) != null) {
@@ -90,6 +94,17 @@ public class SelectReceiversFragment extends ListFragment {
                 }.getType());
             } catch (IOException ex) {
                 ex.printStackTrace();
+            } finally {
+                if (connection != null) {
+                    connection.disconnect();
+                }
+                if (reader != null) {
+                    try {
+                        reader.close();
+                    } catch (final IOException ex) {
+                        ex.printStackTrace();
+                    }
+                }
             }
             return null;
         }
