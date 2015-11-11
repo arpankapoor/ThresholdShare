@@ -1,6 +1,7 @@
 package io.github.arpankapoor.thresholdshare;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -90,7 +91,7 @@ public class SendMessageActivity extends AppCompatActivity {
             setFragment(selectThresholdFragment);
 
             // Set the max threshold size
-            selectThresholdFragment.setMaxThresholdValue(receivers.size());
+            selectThresholdFragment.setMaxThresholdValue(receivers.size() + 1);
 
             // Change button text
             Button nextButton = (Button) findViewById(R.id.next_button);
@@ -131,7 +132,10 @@ public class SendMessageActivity extends AppCompatActivity {
                 for (User receiver : receivers) {
                     jsonObject.accumulate("receiver_ids", receiver.getId());
                 }
-                jsonObject.put("sender_id", 1);
+
+                SharedPreferences sharedPreferences = getSharedPreferences(
+                        getString(R.string.preference_file), MODE_PRIVATE);
+                jsonObject.put("sender_id", sharedPreferences.getInt("id", 0));
                 jsonObject.put("threshold_value", thresholdValue);
                 jsonObject.put("filename", filename);
 
