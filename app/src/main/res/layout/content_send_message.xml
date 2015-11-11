@@ -25,6 +25,7 @@
             android:layout_gravity="bottom"
             android:layout_weight="1"
             android:onClick="cancelButtonHandler"
+            style="?android:attr/buttonBarButtonStyle"
             android:text="@android:string/cancel" />
 
         <Button
@@ -34,6 +35,7 @@
             android:layout_gravity="bottom"
             android:layout_weight="1"
             android:onClick="nextButtonHandler"
+            style="?android:attr/buttonBarButtonStyle"
             android:text="@string/next" />
     </LinearLayout>
 
