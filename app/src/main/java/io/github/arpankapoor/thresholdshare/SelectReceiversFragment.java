@@ -12,10 +12,10 @@ import android.widget.ListView;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
-import java.io.BufferedReader;
+import org.apache.commons.io.IOUtils;
+
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
@@ -63,47 +63,28 @@ public class SelectReceiversFragment extends ListFragment {
                     .build();
 
             HttpURLConnection connection = null;
-            BufferedReader reader = null;
-
             try {
                 URL url = new URL(uri.toString());
                 connection = (HttpURLConnection) url.openConnection();
                 connection.connect();
 
                 InputStream inputStream = connection.getInputStream();
-                StringBuilder buffer = new StringBuilder();
                 if (inputStream == null) {
                     return null;
                 }
-                reader = new BufferedReader(new InputStreamReader(inputStream));
 
-                String line;
-                while ((line = reader.readLine()) != null) {
-                    buffer.append(line);
-                }
-
-                if (buffer.length() == 0) {
+                String jsonStr = IOUtils.toString(inputStream, (String) null);
+                if (jsonStr.length() == 0) {
                     return null;
                 }
 
-                String json = buffer.toString();
-
-                // Convert to list of User objects
-                Gson gson = new Gson();
-                return gson.fromJson(json, new TypeToken<List<User>>() {
+                return new Gson().fromJson(jsonStr, new TypeToken<List<User>>() {
                 }.getType());
             } catch (IOException ex) {
                 ex.printStackTrace();
             } finally {
                 if (connection != null) {
                     connection.disconnect();
-                }
-                if (reader != null) {
-                    try {
-                        reader.close();
-                    } catch (final IOException ex) {
-                        ex.printStackTrace();
-                    }
                 }
             }
             return null;

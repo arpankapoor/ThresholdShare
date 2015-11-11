@@ -24,12 +24,17 @@ public class SelectThresholdFragment extends Fragment {
 
         NumberPicker thresholdPicker = (NumberPicker) getView().findViewById(R.id.thresholdPicker);
         thresholdPicker.clearFocus();
-        thresholdPicker.setMinValue(1);
+        thresholdPicker.setMinValue(2);
         thresholdPicker.setMaxValue(maxThresholdValue);
     }
 
     public void setMaxThresholdValue(int maxValue) {
         maxThresholdValue = maxValue;
+    }
+
+    public int getThresholdValue() {
+        NumberPicker thresholdPicker = (NumberPicker) getView().findViewById(R.id.thresholdPicker);
+        return thresholdPicker.getValue();
     }
 
     @Override

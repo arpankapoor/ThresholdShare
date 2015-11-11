@@ -13,4 +13,5 @@
 
     <string name="server_base_url">http://192.168.12.239:8000</string>
     <string name="get_user_list_api">get_user_list</string>
+    <string name="send_message_api">send_message</string>
 </resources>

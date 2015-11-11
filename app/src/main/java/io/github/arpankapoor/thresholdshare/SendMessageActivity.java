@@ -1,6 +1,7 @@
 package io.github.arpankapoor.thresholdshare;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -8,11 +9,18 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Base64;
 import android.view.View;
 import android.widget.Button;
 
+import org.apache.commons.io.IOUtils;
+import org.json.JSONObject;
+
+import java.io.DataOutputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.List;
 
 import io.github.arpankapoor.user.User;
@@ -24,13 +32,13 @@ public class SendMessageActivity extends AppCompatActivity {
 
     private List<User> receivers = null;
     private InputStream imageStream = null;
+    private String filename = null;
     private int thresholdValue = 100;
-    private int validHours = 1;
 
     private Fragment activeFragment = null;
     private SelectReceiversFragment selectReceiversFragment = null;
+    private SelectFilenameFragment selectFilenameFragment = null;
     private SelectThresholdFragment selectThresholdFragment = null;
-    private SelectThresholdHoursFragment selectThresholdHoursFragment = null;
 
     private void selectImage() {
         Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
@@ -60,13 +68,21 @@ public class SendMessageActivity extends AppCompatActivity {
         // Select image to send
         selectImage();
 
-        // Set Fragment
-        selectReceiversFragment = new SelectReceiversFragment();
-        setFragment(selectReceiversFragment);
+        selectFilenameFragment = new SelectFilenameFragment();
+        setFragment(selectFilenameFragment);
+
     }
 
     public void nextButtonHandler(View view) {
-        if (activeFragment == selectReceiversFragment) {
+        if (activeFragment == selectFilenameFragment) {
+
+            filename = selectFilenameFragment.getFilename();
+
+            // Set Fragment
+            selectReceiversFragment = new SelectReceiversFragment();
+            setFragment(selectReceiversFragment);
+        } else if (activeFragment == selectReceiversFragment) {
+
             receivers = selectReceiversFragment.getSelectedReceivers();
 
             // Select Threshold Value
@@ -76,16 +92,11 @@ public class SendMessageActivity extends AppCompatActivity {
             // Set the max threshold size
             selectThresholdFragment.setMaxThresholdValue(receivers.size());
 
-        } else if (activeFragment == selectThresholdFragment) {
-
-            selectThresholdHoursFragment = new SelectThresholdHoursFragment();
-            setFragment(selectThresholdHoursFragment);
-
             // Change button text
             Button nextButton = (Button) findViewById(R.id.next_button);
             nextButton.setText(getString(R.string.send_message));
-
         } else {
+            thresholdValue = selectThresholdFragment.getThresholdValue();
             new SendMessageTask().execute();
             cancelButtonHandler(view);
         }
@@ -110,6 +121,53 @@ public class SendMessageActivity extends AppCompatActivity {
 
     private class SendMessageTask extends AsyncTask<Void, Void, Void> {
         protected Void doInBackground(Void... params) {
+            Uri uri = Uri.parse(getString(R.string.server_base_url))
+                    .buildUpon()
+                    .appendPath(getString(R.string.send_message_api))
+                    .build();
+
+            JSONObject jsonObject = new JSONObject();
+            try {
+                for (User receiver : receivers) {
+                    jsonObject.accumulate("receiver_ids", receiver.getId());
+                }
+                jsonObject.put("sender_id", 1);
+                jsonObject.put("threshold_value", thresholdValue);
+                jsonObject.put("filename", filename);
+
+                byte[] imageBytes = IOUtils.toByteArray(imageStream);
+
+                jsonObject.put("image", Base64.encodeToString(imageBytes, Base64.DEFAULT));
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+
+            String jsonStr = jsonObject.toString();
+
+            HttpURLConnection connection = null;
+            DataOutputStream dos;
+
+            try {
+                URL url = new URL(uri.toString());
+                connection = (HttpURLConnection) url.openConnection();
+                connection.setDoInput(true);
+                connection.setDoOutput(true);
+                connection.setRequestMethod("POST");
+                connection.setRequestProperty("Content-Type", "application/json;");
+                connection.connect();
+
+                dos = new DataOutputStream(connection.getOutputStream());
+                dos.writeBytes(jsonStr);
+                dos.flush();
+                dos.close();
+                connection.getInputStream();
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            } finally {
+                if (connection != null) {
+                    connection.disconnect();
+                }
+            }
             return null;
         }
     }
