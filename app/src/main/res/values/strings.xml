@@ -7,11 +7,13 @@
     <string name="threshold_hours_text">
         Select number of hours within which subkeys should be available.
     </string>
-
+    <string name="title_activity_registeration">Please register</string>
     <string name="send_message">Send</string>
+    <string name="preference_file">io.github.arpankapoor.PREFERENCE_FILE</string>
 
 
     <string name="server_base_url">http://192.168.12.239:8000</string>
     <string name="get_user_list_api">get_user_list</string>
     <string name="send_message_api">send_message</string>
+    <string name="register_user_api">register_user</string>
 </resources>

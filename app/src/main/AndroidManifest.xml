@@ -28,6 +28,14 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="io.github.arpankapoor.thresholdshare.MainActivity" />
         </activity>
+        <activity
+            android:name=".RegisterationActivity"
+            android:label="@string/title_activity_registeration"
+            android:theme="@style/AppTheme.NoActionBar" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="io.github.arpankapoor.thresholdshare.MainActivity" />
+        </activity>
     </application>
 
 </manifest>

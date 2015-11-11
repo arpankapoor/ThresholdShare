@@ -1,6 +1,7 @@
 package io.github.arpankapoor.thresholdshare;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
@@ -17,6 +18,15 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
+        SharedPreferences sharedPreferences = getSharedPreferences(
+                getString(R.string.preference_file), MODE_PRIVATE);
+
+        if (sharedPreferences.getInt("id", -1) == -1) {
+            Intent intent = new Intent(this, RegisterationActivity.class);
+            startActivity(intent);
+            finish();
+        }
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
