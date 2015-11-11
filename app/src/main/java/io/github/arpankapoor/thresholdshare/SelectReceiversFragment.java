@@ -1,5 +1,7 @@
 package io.github.arpankapoor.thresholdshare;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -56,6 +58,7 @@ public class SelectReceiversFragment extends ListFragment {
     }
 
     private class GetUsersTask extends AsyncTask<Void, Void, List<User>> {
+        @Override
         protected List<User> doInBackground(Void... params) {
             Uri uri = Uri.parse(getString(R.string.server_base_url))
                     .buildUpon()
@@ -90,7 +93,23 @@ public class SelectReceiversFragment extends ListFragment {
             return null;
         }
 
+        @Override
         protected void onPostExecute(List<User> users) {
+            SharedPreferences sharedPreferences = getActivity().getSharedPreferences(
+                    getActivity().getString(R.string.preference_file), Context.MODE_PRIVATE);
+
+            int id = sharedPreferences.getInt("id", -1);
+
+            // Remove self
+            int selfIdx = -1;
+            int size = users.size();
+            for (int i = 0; i < size; i++) {
+                if (users.get(i).getId() == id) {
+                    selfIdx = i;
+                    break;
+                }
+            }
+            users.remove(selfIdx);
             setListAdapter(new ArrayAdapter<>(getActivity(),
                     android.R.layout.simple_list_item_multiple_choice, users));
         }
