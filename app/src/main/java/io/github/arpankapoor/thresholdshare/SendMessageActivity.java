@@ -15,6 +15,7 @@ import android.view.View;
 import android.widget.Button;
 
 import org.apache.commons.io.IOUtils;
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.io.DataOutputStream;
@@ -128,10 +129,12 @@ public class SendMessageActivity extends AppCompatActivity {
                     .build();
 
             JSONObject jsonObject = new JSONObject();
+            JSONArray receiver_ids = new JSONArray();
             try {
                 for (User receiver : receivers) {
-                    jsonObject.accumulate("receiver_ids", receiver.getId());
+                    receiver_ids.put(receiver.getId());
                 }
+                jsonObject.put("receiver_ids", receiver_ids);
 
                 SharedPreferences sharedPreferences = getSharedPreferences(
                         getString(R.string.preference_file), MODE_PRIVATE);
